@@ -1,0 +1,22 @@
+import os
+
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+load_dotenv()
+
+system = ("system", "you are an assistant that answers questions in a {style} style")
+user = ("user", "{question}")
+
+chat_prompt = ChatPromptTemplate([system, user])
+
+messages = chat_prompt.format_messages(style="funny", question="Who is Alan Turing?")
+
+for msg in messages:
+    print(f"{msg.type}: {msg.content}")
+
+model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+model = ChatGoogleGenerativeAI(model=model_name, temperature=0.5)
+result = model.invoke(messages)
+print(result.content)
